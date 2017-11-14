@@ -1,0 +1,28 @@
+{
+  "name": "ens-identity",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "compile": "truffle compile",
+    "lint": "solhint contracts/**/*.sol",
+    "migrate": "truffle migrate",
+    "test": "./test.sh"
+  },
+  "author": "Brett Sun",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "eslint": "^4.11.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "eth-ens-namehash": "^2.0.0",
+    "ethereumjs-testrpc": "^6.0.1",
+    "solhint": "^1.1.8",
+    "truffle": "^4.0.1"
+  }
+}
