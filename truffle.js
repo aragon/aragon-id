@@ -3,7 +3,7 @@ require('babel-polyfill');
 
 module.exports = {
   networks: {
-    development: {
+    testrpc: {
       host: "localhost",
       port: 8545,
       network_id: "*" // Match any network id
