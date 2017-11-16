@@ -1,0 +1,9 @@
+artifacts/
+build/
+
+coverage/
+coverageEnv/
+coverage.json
+scTopics
+
+node_modules/
