@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "compile": "truffle compile",
+    "coverage": "cross-env SOLIDITY_COVERAGE=true ./test.sh",
     "develop": "truffle develop",
     "lint": "solhint 'contracts/**/*.sol'",
     "migrate": "truffle migrate",
@@ -18,6 +19,8 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
+    "coveralls": "^3.0.0",
+    "cross-env": "^5.1.1",
     "eslint": "^4.11.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.8.0",
@@ -27,6 +30,7 @@
     "eth-ens-namehash": "^2.0.0",
     "ethereumjs-testrpc": "^6.0.1",
     "solhint": "^1.1.8",
+    "solidity-coverage": "^0.4.0",
     "truffle": "^4.0.1"
   }
 }
