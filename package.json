@@ -1,5 +1,5 @@
 {
-  "name": "ens-identity",
+  "name": "@aragon/id",
   "version": "0.0.0",
   "description": "",
   "scripts": {
@@ -9,8 +9,11 @@
     "migrate": "truffle migrate",
     "test": "./test.sh"
   },
-  "author": "Brett Sun",
-  "license": "MIT",
+  "author": "Aragon Institution MTU <contact@aragon.one>",
+  "contributors": [
+    "Brett Sun"
+  ],
+  "license": "GPL-3.0",
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
