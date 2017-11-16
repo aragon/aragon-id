@@ -5,13 +5,14 @@ import "./DeedHolder.sol";
 
 
 /**
- * A deed holder that allows the deed owner of an ENS node to set a permanent "manager" for the
- * node. The manager is set to be the node's owner, taking control over creating subdomains and
- * other administrative tasks.
+ * A deed holder that allows the current owner of the deed to set a "manager" for the held ENS node.
+ * The manager is set to be the node's owner, taking control over creating subdomains and other
+ * administrative tasks. Managers do not have to be permanent; they can return control of the ENS
+ * node back to this deed holder to allow a new manager to be later set.
  *
- * This layer on top of the DeedHolder is necessary to take back control of the ENS node from the
- * DeedHolder, as the initial transfer of the deed to the DeedHolder also transfers the ENS node
- * ownership.
+ * This extra layer over the DeedHolder allows one to control how the ENS node is managed after
+ * transferring their deed ownership to a DeedHolder, as the initial transfer of the deed to the
+ * DeedHolder also transfers control of the ENS node.
  */
 contract DelegatingDeedHolder is DeedHolder {
     function DelegatingDeedHolder(address _ens, bytes32 _registrarNode)
