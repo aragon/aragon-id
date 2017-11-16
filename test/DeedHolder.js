@@ -62,10 +62,6 @@ contract("DeedHolder", (accounts) => {
         assert.equal(deedHolder.address, await ens.owner(DOMAIN_NAMEHASH))
     })
 
-    it("reports the correct owner after initial transfer of ownership", async () => {
-        assert.equal(OWNER, await deedHolder.owner(DOMAIN_REGISTRAR_LABEL))
-    })
-
     it("allows an owner to transfer a held deed", async () => {
         const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_LABEL)
         const deed = Deed.at(deedAddress)
