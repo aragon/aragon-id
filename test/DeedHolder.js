@@ -6,6 +6,7 @@ import { setupEns } from "./helpers/setupEns"
 const Deed = artifacts.require("Deed")
 const ENS = artifacts.require("ENS")
 const HashRegistrarSimplified = artifacts.require("Registrar")
+const MockAcceptingTransferRegistrar = artifacts.require("MockAcceptingTransferRegistrar")
 
 const DeedHolder = artifacts.require("DeedHolder")
 
@@ -85,6 +86,28 @@ contract("DeedHolder", (accounts) => {
         // Claim the deed back
         await deedHolder.claim(DOMAIN_REGISTRAR_LABEL)
         assert.equal(OWNER, await deed.owner())
+    })
+
+    it("should allow a claimed deed to be transferred to a new registrar", async () => {
+        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_LABEL)
+        const deed = Deed.at(deedAddress)
+
+        // Setup new .eth TLD registrar; this should take ownership of '.eth'
+        const mockRegistrar = await MockAcceptingTransferRegistrar.new()
+        await ens.setSubnodeOwner(ROOT_NAMEHASH, TLD_REGISTRAR_LABEL, mockRegistrar.address)
+        assert.equal(mockRegistrar.address, await ens.owner(TLD_NAMEHASH))
+        assert.isFalse(await mockRegistrar.acceptedTransfer(DOMAIN_REGISTRAR_LABEL))
+
+        // Claim the deed back
+        await deedHolder.claim(DOMAIN_REGISTRAR_LABEL)
+
+        // Transfer the deed to the new registrar
+        await registrar.transferRegistrars(DOMAIN_REGISTRAR_LABEL)
+        assert.isTrue(await mockRegistrar.acceptedTransfer(DOMAIN_REGISTRAR_LABEL))
+        assert.equal(mockRegistrar.address, await deed.registrar())
+
+        // Make sure the deed's been removed from the old registrar
+        assert.equal(0, (await registrar.entries(DOMAIN_REGISTRAR_LABEL))[1])
     })
 
     it("disallows the original owner from transferring the held deed via the registrar after taking ownership", async () => {
