@@ -10,7 +10,7 @@ async function assertThrows(block, message, errorCode) {
     } catch (e) {
         return assertError(e, errorCode, message)
     }
-    assert.fail("should have thrown before")
+    assert.fail(`should have thrown before with "${message}"`)
 }
 
 module.exports = {
