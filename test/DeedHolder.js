@@ -86,6 +86,7 @@ contract("DeedHolder", (accounts) => {
         // Claim the deed back
         await deedHolder.claim(DOMAIN_REGISTRAR_LABEL)
         assert.equal(OWNER, await deed.owner())
+        assert.equal(OWNER, await deedHolder.owner(DOMAIN_REGISTRAR_LABEL))
     })
 
     it("should allow a claimed deed to be transferred to a new registrar", async () => {
