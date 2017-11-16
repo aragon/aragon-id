@@ -49,13 +49,9 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
      */
     function receiveApproval(address _from, uint256 _amount, address _, bytes _data) external {
         require(msg.sender == address(burningToken));
-        require(_amount >= registrationCost);
 
         // Make the external call and if successful, burn the tokens
         require(this.call(_data));
-        if (_amount > 0) {
-            require(burningToken.transferFrom(_from, BURN_ADDRESS, registrationCost));
-        }
     }
 
     /**
@@ -67,16 +63,29 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
     }
 
     /**
-     * Register a subdomain. Only callable via `recieveApproval()`.
-     * Delegates to `FIFSResolvingRegistrar.registerWithResolver()`.
-     * Note that, via polymorphism, calling `register()` on this contract will resolve here.
+     * Register a subdomain with the default resolver if it hasn't been claimed yet.
+     * Overwrites `FIFSResolvingRegistrar.register()`, to avoid polymorphism.
+     * @param _subnode The hash of the label to register.
+     * @param _owner The address of the new owner.
+     */
+    function register(bytes32 _subnode, address _owner) external {
+        registerWithResolver(_subnode, _owner, defaultResolver);
+    }
+
+    /**
+     * Register a subdomain if it hasn't been claimed yet.
+     * Requires the _owner to have approved at least the amount of the requiredCost to this
+     * contract for the burningToken.
      * @param _subnode The hash of the label to register.
      * @param _owner The address of the new owner.
      * @param _resolver The address of the resolver.
      */
     function registerWithResolver(bytes32 _subnode, address _owner, AbstractPublicResolver _resolver) public {
-        require(msg.sender == address(this));
-
         super.registerWithResolver(_subnode, _owner, _resolver);
+
+        // Burn tokens
+        if (registrationCost > 0) {
+            require(burningToken.transferFrom(_owner, BURN_ADDRESS, registrationCost));
+        }
     }
 }

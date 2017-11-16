@@ -29,7 +29,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
     let token
 
     beforeEach(async () => {
-        // Setup token balances
+        // Setup token balancess
         token = await MockApproveAndCallERC20.new()
         await token.mintToken(OWNER, INITIAL_TOKENS)
         await token.mintToken(OTHER_OWNER, INITIAL_TOKENS)
@@ -62,21 +62,33 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         })
     })
 
-    it("should not allow direct registrations", async () => {
-        await assertRevert(async () => {
-            await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
-        })
+    it("should allow direct registrations when there's no cost", async () => {
+        await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
+
+        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
+        assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
+
+        // Make sure no tokens were burned
+        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
     })
 
-    it("should not allow direct registrations with resolvers", async () => {
+    it("should allow direct registrations with resolvers when there's no cost", async () => {
         const newResolver = await PublicResolver.new(ens.address)
 
-        await assertRevert(async () => {
-            await registrar.registerWithResolver(DOMAIN_REGISTRAR_HASH, OWNER, newResolver.address)
-        })
+        await registrar.registerWithResolver(DOMAIN_REGISTRAR_HASH, OWNER, newResolver.address)
+        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
+        assert.equal(newResolver.address, await ens.resolver(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await newResolver.addr(DOMAIN_NAMEHASH))
+
+        // Make sure the default resolver isn't set
+        assert.equal(0, await resolver.addr(DOMAIN_NAMEHASH))
+
+        // Make sure no tokens were burned
+        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
     })
 
-    it("should allow all registrations when there's no cost", async () => {
+    it("should allow approve and call registrations when there's no cost", async () => {
         // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
         const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
 
@@ -86,10 +98,10 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
 
         // Make sure no tokens were burned
-        assert.equal(INITIAL_TOKENS, (await token.balance(OWNER)).toNumber())
+        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
     })
 
-    it("should allow all registrations with a resolver when there's no cost", async () => {
+    it("should allow approve and call registrations with a resolver when there's no cost", async () => {
         const newResolver = await PublicResolver.new(ens.address)
 
         // Construct calldata for registerWithResolver(DOMAIN_REGISTRAR_HASH, OWNER, newResolver.address)
@@ -108,10 +120,26 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         assert.equal(0, await resolver.addr(DOMAIN_NAMEHASH))
 
         // Make sure no tokens were burned
-        assert.equal(INITIAL_TOKENS, (await token.balance(OWNER)).toNumber())
+        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
     })
 
-    it("should allow subdomain registrations when enough tokens are burned", async () => {
+    it("should allow direct registrations when enough tokens are burned", async () => {
+        const newCost = 100
+        await registrar.setRegistrationCost(newCost)
+
+        await token.approve(registrar.address, newCost)
+        await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
+
+        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
+        assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
+
+        // Make sure tokens were burned
+        assert.equal(INITIAL_TOKENS - newCost, (await token.balances(OWNER)).toNumber())
+        assert.equal(newCost, (await token.balances(BURN_ADDRESS)).toNumber())
+    })
+
+    it("should allow approve and call registrations when enough tokens are burned", async () => {
         const newCost = 100
         await registrar.setRegistrationCost(newCost)
 
@@ -124,25 +152,24 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
 
         // Make sure tokens were burned
-        assert.equal(INITIAL_TOKENS - newCost, (await token.balance(OWNER)).toNumber())
-        assert.equal(newCost, (await token.balance(BURN_ADDRESS)).toNumber())
+        assert.equal(INITIAL_TOKENS - newCost, (await token.balances(OWNER)).toNumber())
+        assert.equal(newCost, (await token.balances(BURN_ADDRESS)).toNumber())
     })
 
-    it("should only burn the required amount and no more", async () => {
+    it("should not allow direct registrations when not enough tokens are burned", async () => {
         const newCost = 100
         await registrar.setRegistrationCost(newCost)
 
-        // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
-        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
+        await token.approve(registrar.address, newCost - 5)
+        await assertRevert(async () => {
+            await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
+        })
 
-        await token.approveAndCall(registrar.address, newCost * 10, calldata)
-
-        // Make sure only required amount of tokens were burned
-        assert.equal(INITIAL_TOKENS - newCost, (await token.balance(OWNER)).toNumber())
-        assert.equal(newCost, (await token.balance(BURN_ADDRESS)).toNumber())
+        // Make sure no tokens were burned
+        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
     })
 
-    it("should not allow subdomain registrations when not enough tokens are burned", async () => {
+    it("should not allow approve and call registrations when not enough tokens are burned", async () => {
         const newCost = 100
         await registrar.setRegistrationCost(newCost)
 
@@ -154,6 +181,32 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         })
 
         // Make sure no tokens were burned
-        assert.equal(INITIAL_TOKENS, (await token.balance(OWNER)).toNumber())
+        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
+    })
+
+    it("should only burn the required amount via direct registration and no more", async () => {
+        const newCost = 100
+        await registrar.setRegistrationCost(newCost)
+
+        await token.approve(registrar.address, newCost * 10)
+        await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
+
+        // Make sure only required amount of tokens were burned
+        assert.equal(INITIAL_TOKENS - newCost, (await token.balances(OWNER)).toNumber())
+        assert.equal(newCost, (await token.balances(BURN_ADDRESS)).toNumber())
+    })
+
+    it("should only burn the required amount via approve and call registration and no more", async () => {
+        const newCost = 100
+        await registrar.setRegistrationCost(newCost)
+
+        // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
+        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
+
+        await token.approveAndCall(registrar.address, newCost * 10, calldata)
+
+        // Make sure only required amount of tokens were burned
+        assert.equal(INITIAL_TOKENS - newCost, (await token.balances(OWNER)).toNumber())
+        assert.equal(newCost, (await token.balances(BURN_ADDRESS)).toNumber())
     })
 })

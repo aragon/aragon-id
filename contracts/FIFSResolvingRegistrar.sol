@@ -12,8 +12,8 @@ import "./ens/ResolverInterface.sol";
  */
 contract FIFSResolvingRegistrar {
     bytes32 public rootNode;
-    AbstractENS private ens;
-    AbstractPublicResolver private defaultResolver;
+    AbstractENS internal ens;
+    AbstractPublicResolver internal defaultResolver;
 
     bytes4 private constant ADDR_INTERFACE_ID = 0x3b3b57de;
 
