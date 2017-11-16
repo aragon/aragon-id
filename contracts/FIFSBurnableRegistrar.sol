@@ -2,6 +2,7 @@ pragma solidity 0.4.18;
 
 import "./interface/ApproveAndCallReceiver.sol";
 import "./zeppelin/ERC20.sol";
+import "./zeppelin/Ownable.sol";
 import "./FIFSResolvingRegistrar.sol";
 
 
@@ -11,17 +12,11 @@ import "./FIFSResolvingRegistrar.sol";
 
  * Note: requires the token to support the `approveAndCall()` interface.
  */
-contract FIFSBurnableRegistrar is ApproveAndCallReceiver, FIFSResolvingRegistrar {
+contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolvingRegistrar {
     ERC20 public burningToken;
     uint256 public registrationCost;
-    address private owner;
 
     address private constant BURN_ADDRESS = 0xdead;
-
-    modifier onlyOwner() {
-        require(msg.sender == owner);
-        _;
-    }
 
     /**
      * Constructor.
@@ -30,19 +25,16 @@ contract FIFSBurnableRegistrar is ApproveAndCallReceiver, FIFSResolvingRegistrar
      * @param _node The node that this registrar administers.
      * @param _burningToken The token to be burned for claiming addresses.
      * @param _startingCost The initial cost of claiming an address.
-     * @param _owner The owner of the registrar.
      */
     function FIFSBurnableRegistrar(
         AbstractENS _ensAddr,
         AbstractPublicResolver _resolver,
         bytes32 _node,
         address _burningToken,
-        uint256 _startingCost,
-        address _owner
-    ) public FIFSResolvingRegistrar(_ensAddr, _resolver, _node) {
+        uint256 _startingCost
+    ) public Ownable FIFSResolvingRegistrar(_ensAddr, _resolver, _node) {
         burningToken = ERC20(_burningToken);
         registrationCost = _startingCost;
-        owner = _owner;
     }
 
     /**

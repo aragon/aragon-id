@@ -11,7 +11,6 @@ const FIFSBurnableRegistrar = artifacts.require("FIFSBurnableRegistrar")
 contract("FIFSBurnableRegistrar", (accounts) => {
     const OWNER = accounts[0]
     const OTHER_OWNER = accounts[1]
-    const REGISTRAR_OWNER = accounts[2]
     const BURN_ADDRESS = "0xdead"
     const INITIAL_TOKENS = 10000000
 
@@ -45,22 +44,21 @@ contract("FIFSBurnableRegistrar", (accounts) => {
             resolver.address,
             TLD_NAMEHASH,
             token.address,
-            0,
-            REGISTRAR_OWNER
+            0
         )
         await ens.setSubnodeOwner(ROOT_NAMEHASH, TLD_REGISTRAR_HASH, registrar.address)
     })
 
     it("should allow the owner to change the burning cost", async () => {
         const newCost = 100
-        await registrar.setRegistrationCost(newCost, { from: REGISTRAR_OWNER })
+        await registrar.setRegistrationCost(newCost)
 
         assert.equal(newCost, await registrar.registrationCost())
     })
 
     it("should not allow anybody but the owner to change the burning cost", async () => {
         await assertRevert(async () => {
-            await registrar.setRegistrationCost(100)
+            await registrar.setRegistrationCost(100, { from: OTHER_OWNER })
         })
     })
 
@@ -115,7 +113,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
 
     it("should allow subdomain registrations when enough tokens are burned", async () => {
         const newCost = 100
-        await registrar.setRegistrationCost(newCost, { from: REGISTRAR_OWNER })
+        await registrar.setRegistrationCost(newCost)
 
         // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
         const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
@@ -132,7 +130,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
 
     it("should only burn the required amount and no more", async () => {
         const newCost = 100
-        await registrar.setRegistrationCost(newCost, { from: REGISTRAR_OWNER })
+        await registrar.setRegistrationCost(newCost)
 
         // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
         const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
@@ -146,7 +144,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
 
     it("should not allow subdomain registrations when not enough tokens are burned", async () => {
         const newCost = 100
-        await registrar.setRegistrationCost(newCost, { from: REGISTRAR_OWNER })
+        await registrar.setRegistrationCost(newCost)
 
         // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
         const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
