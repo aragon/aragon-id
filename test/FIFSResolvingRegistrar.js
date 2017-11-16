@@ -37,32 +37,32 @@ contract("FIFSResolvingRegistrar", (accounts) => {
 
     it("should be able to register subdomains", async () => {
         await registrar.register(DOMAIN_REGISTRAR_LABEL, OWNER)
-        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
-        assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
-        assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await ens.owner.call(DOMAIN_NAMEHASH))
+        assert.equal(resolver.address, await ens.resolver.call(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await resolver.addr.call(DOMAIN_NAMEHASH))
     })
 
     it("should be able to register subdomains with their own addr resolver", async () => {
         const newResolver = await PublicResolver.new(ens.address)
 
         await registrar.registerWithResolver(DOMAIN_REGISTRAR_LABEL, OWNER, newResolver.address)
-        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
-        assert.equal(newResolver.address, await ens.resolver(DOMAIN_NAMEHASH))
-        assert.equal(OWNER, await newResolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await ens.owner.call(DOMAIN_NAMEHASH))
+        assert.equal(newResolver.address, await ens.resolver.call(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await newResolver.addr.call(DOMAIN_NAMEHASH))
 
         // Make sure the default resolver isn't set
-        assert.equal(0, await resolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(0, await resolver.addr.call(DOMAIN_NAMEHASH))
     })
 
     it("should be able to register subdomains with their own non-addr resolver", async () => {
         const mockResolver = await MockResolver.new()
 
         await registrar.registerWithResolver(DOMAIN_REGISTRAR_LABEL, OWNER, mockResolver.address)
-        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
-        assert.equal(mockResolver.address, await ens.resolver(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await ens.owner.call(DOMAIN_NAMEHASH))
+        assert.equal(mockResolver.address, await ens.resolver.call(DOMAIN_NAMEHASH))
         assert.throws(() => {
             // Just show that mockResolver doesn't have an `addr()` function, so no async/await
-            mockResolver.addr(DOMAIN_NAMEHASH)
+            mockResolver.addr.call(DOMAIN_NAMEHASH)
         })
     })
 
