@@ -42,6 +42,8 @@ contract DeedHolder {
     IENS internal ens;
     mapping(bytes32=>address) private owners;
 
+    event TransferDeed(bytes32 indexed node, address indexed newOwner);
+
     modifier onlyDeedOwner(bytes32 _node) {
         require(owner(_node) == msg.sender);
         _;
@@ -95,5 +97,6 @@ contract DeedHolder {
      */
     function transfer(bytes32 _node, address _newOwner) public onlyDeedOwner(_node) {
         owners[_node] = _newOwner;
+        TransferDeed(_node, _newOwner);
     }
 }
