@@ -91,7 +91,7 @@ contract("DeedHolder", (accounts) => {
         assert.equal(OWNER, await deed.owner())
     })
 
-    it("disallows the original owner from transfering the held deed via the registrar after taking ownership", async () => {
+    it("disallows the original owner from transferring the held deed via the registrar after taking ownership", async () => {
         await assertRevert(async () => {
             await registrar.transfer(DOMAIN_REGISTRAR_LABEL, NEW_HOLDER, { from: OWNER })
         })

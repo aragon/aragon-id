@@ -57,7 +57,7 @@ contract("DelegatingDeedHolder", (accounts) => {
         assert.equal(resolver.address, await ens.owner(DOMAIN_NAMEHASH))
     })
 
-    it("allows an owner to set a manager for the ENS node after transfering the held deed", async () => {
+    it("allows an owner to set a manager for the ENS node after transferring the held deed", async () => {
         await delegatingDeedHolder.transfer(DOMAIN_REGISTRAR_LABEL, NEW_HOLDER)
 
         await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_LABEL, resolver.address, { from: NEW_HOLDER })
