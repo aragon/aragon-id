@@ -5,7 +5,7 @@
   "scripts": {
     "compile": "truffle compile",
     "develop": "truffle develop",
-    "lint": "solhint contracts/**/*.sol",
+    "lint": "solhint 'contracts/**/*.sol'",
     "migrate": "truffle migrate",
     "test": "./test.sh"
   },
