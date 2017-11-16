@@ -51,8 +51,6 @@ contract FIFSResolvingRegistrar {
      *                  be set to the new owner.
      */
     function registerWithResolver(bytes32 _subnode, address _owner, AbstractPublicResolver _resolver) public {
-        require(_resolver != address(0));
-
         bytes32 node = keccak256(rootNode, _subnode);
         address currentOwner = ens.owner(node);
         require(currentOwner == address(0));
