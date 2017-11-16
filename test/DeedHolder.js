@@ -19,8 +19,8 @@ contract("DeedHolder", (accounts) => {
     const ROOT_NAMEHASH = namehash("")
     const TLD_NAMEHASH = namehash(TLD)
     const DOMAIN_NAMEHASH = namehash(`${DOMAIN}.${TLD}`)
-    const TLD_REGISTRAR_HASH = web3.sha3(TLD)
-    const DOMAIN_REGISTRAR_HASH = web3.sha3(DOMAIN)
+    const TLD_REGISTRAR_LABEL = web3.sha3(TLD)
+    const DOMAIN_REGISTRAR_LABEL = web3.sha3(DOMAIN)
 
     let ens
     let registrar
@@ -32,10 +32,10 @@ contract("DeedHolder", (accounts) => {
             { Deed, ENS, HashRegistrarSimplified },
             {
                 domainNamehash: DOMAIN_NAMEHASH,
-                domainRegistrarHash: DOMAIN_REGISTRAR_HASH,
+                domainRegistrarHash: DOMAIN_REGISTRAR_LABEL,
                 rootNamehash: ROOT_NAMEHASH,
                 tldNamehash: TLD_NAMEHASH,
-                tldRegistrarHash: TLD_REGISTRAR_HASH,
+                tldRegistrarHash: TLD_REGISTRAR_LABEL,
             }
         )
         ens = contracts.ens
@@ -45,17 +45,17 @@ contract("DeedHolder", (accounts) => {
         deedHolder = await DeedHolder.new(ens.address, TLD_NAMEHASH)
 
         // Transfer ownership of the deed to the deed holder
-        await registrar.transfer(DOMAIN_REGISTRAR_HASH, deedHolder.address)
+        await registrar.transfer(DOMAIN_REGISTRAR_LABEL, deedHolder.address)
     })
 
     it("can take ownership of a deed", async () => {
-        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_HASH)
+        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_LABEL)
         const deed = Deed.at(deedAddress)
 
         assert.equal(deedHolder.address, await deed.owner())
 
         // The deed holder still declares the original owner as the owner of the deed
-        assert.equal(OWNER, await deedHolder.owner(DOMAIN_REGISTRAR_HASH))
+        assert.equal(OWNER, await deedHolder.owner(DOMAIN_REGISTRAR_LABEL))
     })
 
     it("takes ownership of the ENS node associated with the held deed", async () => {
@@ -63,37 +63,37 @@ contract("DeedHolder", (accounts) => {
     })
 
     it("reports the correct owner after initial transfer of ownership", async () => {
-        assert.equal(OWNER, await deedHolder.owner(DOMAIN_REGISTRAR_HASH))
+        assert.equal(OWNER, await deedHolder.owner(DOMAIN_REGISTRAR_LABEL))
     })
 
     it("allows an owner to transfer a held deed", async () => {
-        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_HASH)
+        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_LABEL)
         const deed = Deed.at(deedAddress)
 
-        await deedHolder.transfer(DOMAIN_REGISTRAR_HASH, NEW_HOLDER)
-        assert.equal(NEW_HOLDER, await deedHolder.owner(DOMAIN_REGISTRAR_HASH))
+        await deedHolder.transfer(DOMAIN_REGISTRAR_LABEL, NEW_HOLDER)
+        assert.equal(NEW_HOLDER, await deedHolder.owner(DOMAIN_REGISTRAR_LABEL))
 
         // Make sure it doesn't transfer the actual deed
         assert.equal(deedHolder.address, await deed.owner())
     })
 
     it("allows the owner to claim back a deed after the registrar upgrades", async () => {
-        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_HASH)
+        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_LABEL)
         const deed = Deed.at(deedAddress)
 
         // Setup new .eth TLD registrar; this should take ownership of '.eth'
         const newRegistrar = await HashRegistrarSimplified.new(ens.address, TLD_NAMEHASH, 0)
-        await ens.setSubnodeOwner(ROOT_NAMEHASH, TLD_REGISTRAR_HASH, newRegistrar.address)
+        await ens.setSubnodeOwner(ROOT_NAMEHASH, TLD_REGISTRAR_LABEL, newRegistrar.address)
         assert.equal(newRegistrar.address, await ens.owner(TLD_NAMEHASH))
 
         // Claim the deed back
-        await deedHolder.claim(DOMAIN_REGISTRAR_HASH)
+        await deedHolder.claim(DOMAIN_REGISTRAR_LABEL)
         assert.equal(OWNER, await deed.owner())
     })
 
     it("disallows the original owner from transfering the held deed via the registrar after taking ownership", async () => {
         await assertRevert(async () => {
-            await registrar.transfer(DOMAIN_REGISTRAR_HASH, NEW_HOLDER, { from: OWNER })
+            await registrar.transfer(DOMAIN_REGISTRAR_LABEL, NEW_HOLDER, { from: OWNER })
         })
     })
 
@@ -105,7 +105,7 @@ contract("DeedHolder", (accounts) => {
 
     it("disallows the original owner from re-finalizing the auction after taking ownership", async () => {
         await assertRevert(async () => {
-            await registrar.finalizeAuction(DOMAIN_REGISTRAR_HASH, { from: OWNER })
+            await registrar.finalizeAuction(DOMAIN_REGISTRAR_LABEL, { from: OWNER })
         })
     })
 })

@@ -20,8 +20,8 @@ contract("DelegatingDeedHolder", (accounts) => {
     const ROOT_NAMEHASH = namehash("")
     const TLD_NAMEHASH = namehash(TLD)
     const DOMAIN_NAMEHASH = namehash(`${DOMAIN}.${TLD}`)
-    const TLD_REGISTRAR_HASH = web3.sha3(TLD)
-    const DOMAIN_REGISTRAR_HASH = web3.sha3(DOMAIN)
+    const TLD_REGISTRAR_LABEL = web3.sha3(TLD)
+    const DOMAIN_REGISTRAR_LABEL = web3.sha3(DOMAIN)
 
     let ens
     let registrar
@@ -34,10 +34,10 @@ contract("DelegatingDeedHolder", (accounts) => {
             { Deed, ENS, HashRegistrarSimplified },
             {
                 domainNamehash: DOMAIN_NAMEHASH,
-                domainRegistrarHash: DOMAIN_REGISTRAR_HASH,
+                domainRegistrarHash: DOMAIN_REGISTRAR_LABEL,
                 rootNamehash: ROOT_NAMEHASH,
                 tldNamehash: TLD_NAMEHASH,
-                tldRegistrarHash: TLD_REGISTRAR_HASH,
+                tldRegistrarHash: TLD_REGISTRAR_LABEL,
             }
         )
         ens = contracts.ens
@@ -49,27 +49,27 @@ contract("DelegatingDeedHolder", (accounts) => {
         delegatingDeedHolder = await DelegatingDeedHolder.new(ens.address, TLD_NAMEHASH)
 
         // Transfer ownership of the deed to the deed holder
-        await registrar.transfer(DOMAIN_REGISTRAR_HASH, delegatingDeedHolder.address)
+        await registrar.transfer(DOMAIN_REGISTRAR_LABEL, delegatingDeedHolder.address)
     })
 
     it("allows an owner to set a manager for the ENS node", async () => {
-        await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_HASH, resolver.address)
+        await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_LABEL, resolver.address)
         assert.equal(resolver.address, await ens.owner(DOMAIN_NAMEHASH))
     })
 
     it("allows an owner to set a manager for the ENS node after transfering the held deed", async () => {
-        await delegatingDeedHolder.transfer(DOMAIN_REGISTRAR_HASH, NEW_HOLDER)
+        await delegatingDeedHolder.transfer(DOMAIN_REGISTRAR_LABEL, NEW_HOLDER)
 
-        await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_HASH, resolver.address, { from: NEW_HOLDER })
+        await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_LABEL, resolver.address, { from: NEW_HOLDER })
         assert.equal(resolver.address, await ens.owner(DOMAIN_NAMEHASH))
     })
 
     it("only allows the manager to be set once", async () => {
-        await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_HASH, resolver.address)
+        await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_LABEL, resolver.address)
 
         const newResolver = await PublicResolver.new(ens.address)
         await assertRevert(async () => {
-            await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_HASH, newResolver.address)
+            await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_LABEL, newResolver.address)
         })
     })
 })
