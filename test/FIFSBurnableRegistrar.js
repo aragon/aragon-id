@@ -12,6 +12,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
     const OWNER = accounts[0]
     const OTHER_OWNER = accounts[1]
     const REGISTRAR_OWNER = accounts[2]
+    const BURN_ADDRESS = "0xdead"
     const INITIAL_TOKENS = 10000000
 
     // ENS related constants
@@ -126,6 +127,21 @@ contract("FIFSBurnableRegistrar", (accounts) => {
 
         // Make sure tokens were burned
         assert.equal(INITIAL_TOKENS - newCost, (await token.balance(OWNER)).toNumber())
+        assert.equal(newCost, (await token.balance(BURN_ADDRESS)).toNumber())
+    })
+
+    it("should only burn the required amount and no more", async () => {
+        const newCost = 100
+        await registrar.setRegistrationCost(newCost, { from: REGISTRAR_OWNER })
+
+        // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
+        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
+
+        await token.approveAndCall(registrar.address, newCost * 10, calldata)
+
+        // Make sure only required amount of tokens were burned
+        assert.equal(INITIAL_TOKENS - newCost, (await token.balance(OWNER)).toNumber())
+        assert.equal(newCost, (await token.balance(BURN_ADDRESS)).toNumber())
     })
 
     it("should not allow subdomain registrations when not enough tokens are burned", async () => {
