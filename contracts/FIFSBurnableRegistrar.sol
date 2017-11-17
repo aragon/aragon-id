@@ -55,6 +55,16 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
     }
 
     /**
+     * Register a subdomain with the default resolver if it hasn't been claimed yet.
+     * Overwrites `FIFSResolvingRegistrar.register()`, to avoid polymorphism.
+     * @param _subnode The hash of the label to register.
+     * @param _owner The address of the new owner.
+     */
+    function register(bytes32 _subnode, address _owner) external {
+        registerWithResolver(_subnode, _owner, defaultResolver);
+    }
+
+    /**
      * Set the token to be burnt.
      * @param _burningToken The token to be burnt.
      */
@@ -68,16 +78,6 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
      */
     function setRegistrationCost(uint256 _cost) external onlyOwner {
         registrationCost = _cost;
-    }
-
-    /**
-     * Register a subdomain with the default resolver if it hasn't been claimed yet.
-     * Overwrites `FIFSResolvingRegistrar.register()`, to avoid polymorphism.
-     * @param _subnode The hash of the label to register.
-     * @param _owner The address of the new owner.
-     */
-    function register(bytes32 _subnode, address _owner) external {
-        registerWithResolver(_subnode, _owner, defaultResolver);
     }
 
     /**
