@@ -20,8 +20,8 @@ contract("FIFSBurnableRegistrar", (accounts) => {
     const ROOT_NAMEHASH = namehash("")
     const TLD_NAMEHASH = namehash(TLD)
     const DOMAIN_NAMEHASH = namehash(`${DOMAIN}.${TLD}`)
-    const TLD_REGISTRAR_HASH = web3.sha3(TLD)
-    const DOMAIN_REGISTRAR_HASH = web3.sha3(DOMAIN)
+    const TLD_REGISTRAR_LABEL = web3.sha3(TLD)
+    const DOMAIN_REGISTRAR_LABEL = web3.sha3(DOMAIN)
 
     let ens
     let resolver
@@ -46,7 +46,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
             token.address,
             0
         )
-        await ens.setSubnodeOwner(ROOT_NAMEHASH, TLD_REGISTRAR_HASH, registrar.address)
+        await ens.setSubnodeOwner(ROOT_NAMEHASH, TLD_REGISTRAR_LABEL, registrar.address)
     })
 
     it("should allow the owner to change the burning cost", async () => {
@@ -78,7 +78,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
     })
 
     it("should allow direct registrations when there's no cost", async () => {
-        await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
+        await registrar.register(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
         assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
@@ -91,7 +91,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
     it("should allow direct registrations with resolvers when there's no cost", async () => {
         const newResolver = await PublicResolver.new(ens.address)
 
-        await registrar.registerWithResolver(DOMAIN_REGISTRAR_HASH, OWNER, newResolver.address)
+        await registrar.registerWithResolver(DOMAIN_REGISTRAR_LABEL, OWNER, newResolver.address)
         assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
         assert.equal(newResolver.address, await ens.resolver(DOMAIN_NAMEHASH))
         assert.equal(OWNER, await newResolver.addr(DOMAIN_NAMEHASH))
@@ -104,8 +104,8 @@ contract("FIFSBurnableRegistrar", (accounts) => {
     })
 
     it("should allow approve and call registrations when there's no cost", async () => {
-        // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
-        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
+        // Construct calldata for register(DOMAIN_REGISTRAR_LABEL, OWNER)
+        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         await token.approveAndCall(registrar.address, 100, calldata)
         assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
@@ -119,9 +119,9 @@ contract("FIFSBurnableRegistrar", (accounts) => {
     it("should allow approve and call registrations with a resolver when there's no cost", async () => {
         const newResolver = await PublicResolver.new(ens.address)
 
-        // Construct calldata for registerWithResolver(DOMAIN_REGISTRAR_HASH, OWNER, newResolver.address)
+        // Construct calldata for registerWithResolver(DOMAIN_REGISTRAR_LABEL, OWNER, newResolver.address)
         const calldata = registrar.contract.registerWithResolver.getData(
-            DOMAIN_REGISTRAR_HASH,
+            DOMAIN_REGISTRAR_LABEL,
             OWNER,
             newResolver.address
         )
@@ -143,7 +143,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         await registrar.setRegistrationCost(newCost)
 
         await token.approve(registrar.address, newCost)
-        await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
+        await registrar.register(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
         assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
@@ -158,8 +158,8 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         const newCost = 100
         await registrar.setRegistrationCost(newCost)
 
-        // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
-        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
+        // Construct calldata for register(DOMAIN_REGISTRAR_LABEL, OWNER)
+        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         await token.approveAndCall(registrar.address, newCost, calldata)
         assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
@@ -181,7 +181,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         await registrar.setBurningToken(newToken.address)
 
         await newToken.approve(registrar.address, newCost)
-        await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
+        await registrar.register(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
         assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
@@ -202,7 +202,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
 
         await token.approve(registrar.address, newCost - 5)
         await assertRevert(async () => {
-            await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
+            await registrar.register(DOMAIN_REGISTRAR_LABEL, OWNER)
         })
 
         // Make sure no tokens were burned
@@ -213,8 +213,8 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         const newCost = 100
         await registrar.setRegistrationCost(newCost)
 
-        // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
-        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
+        // Construct calldata for register(DOMAIN_REGISTRAR_LABEL, OWNER)
+        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         await assertRevert(async () => {
             await token.approveAndCall(registrar.address, newCost - 5, calldata)
@@ -229,7 +229,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         await registrar.setRegistrationCost(newCost)
 
         await token.approve(registrar.address, newCost * 10)
-        await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
+        await registrar.register(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         // Make sure only required amount of tokens were burned
         assert.equal(INITIAL_TOKENS - newCost, (await token.balances(OWNER)).toNumber())
@@ -240,8 +240,8 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         const newCost = 100
         await registrar.setRegistrationCost(newCost)
 
-        // Construct calldata for register(DOMAIN_REGISTRAR_HASH, OWNER)
-        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_HASH, OWNER)
+        // Construct calldata for register(DOMAIN_REGISTRAR_LABEL, OWNER)
+        const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         await token.approveAndCall(registrar.address, newCost * 10, calldata)
 
