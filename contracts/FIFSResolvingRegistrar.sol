@@ -17,7 +17,7 @@ contract FIFSResolvingRegistrar {
 
     bytes4 private constant ADDR_INTERFACE_ID = 0x3b3b57de;
 
-    event ClaimedSubdomain(bytes32 indexed subnode, address indexed owner, address indexed resolver);
+    event ClaimSubdomain(bytes32 indexed subnode, address indexed owner, address indexed resolver);
 
     /**
      * Constructor.
@@ -64,6 +64,6 @@ contract FIFSResolvingRegistrar {
         // Give ownership to the claimer
         ens.setOwner(node, _owner);
 
-        ClaimedSubdomain(_subnode, _owner, address(_resolver));
+        ClaimSubdomain(_subnode, _owner, address(_resolver));
     }
 }
