@@ -62,6 +62,21 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         })
     })
 
+    it("should allow the owner to change the burning token", async () => {
+        const newToken = await MockApproveAndCallERC20.new()
+        await registrar.setBurningToken(newToken.address)
+
+        assert.equal(newToken.address, await registrar.burningToken())
+    })
+
+    it("should not allow anybody but the owner to change the burning token", async () => {
+        const newToken = await MockApproveAndCallERC20.new()
+
+        await assertRevert(async () => {
+            await registrar.setBurningToken(newToken.address, { from: OTHER_OWNER })
+        })
+    })
+
     it("should allow direct registrations when there's no cost", async () => {
         await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
 
@@ -154,6 +169,31 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         // Make sure tokens were burned
         assert.equal(INITIAL_TOKENS - newCost, (await token.balances(OWNER)).toNumber())
         assert.equal(newCost, (await token.balances(BURN_ADDRESS)).toNumber())
+    })
+
+    it("should still allow registrations after changing the token", async () => {
+        const newCost = 100
+        await registrar.setRegistrationCost(newCost)
+
+        // Set up new token and set it as the burnt token
+        const newToken = await MockApproveAndCallERC20.new()
+        await newToken.mintToken(OWNER, INITIAL_TOKENS)
+        await registrar.setBurningToken(newToken.address)
+
+        await newToken.approve(registrar.address, newCost)
+        await registrar.register(DOMAIN_REGISTRAR_HASH, OWNER)
+
+        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
+        assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
+
+        // Make sure new tokens were burned
+        assert.equal(INITIAL_TOKENS - newCost, (await newToken.balances(OWNER)).toNumber())
+        assert.equal(newCost, (await newToken.balances(BURN_ADDRESS)).toNumber())
+
+        // Make sure old tokens weren't burned
+        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
+        assert.equal(0, (await token.balances(BURN_ADDRESS)).toNumber())
     })
 
     it("should not allow direct registrations when not enough tokens are burned", async () => {

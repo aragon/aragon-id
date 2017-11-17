@@ -30,10 +30,10 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
         AbstractENS _ensAddr,
         AbstractPublicResolver _resolver,
         bytes32 _node,
-        address _burningToken,
+        ERC20 _burningToken,
         uint256 _startingCost
     ) public Ownable FIFSResolvingRegistrar(_ensAddr, _resolver, _node) {
-        burningToken = ERC20(_burningToken);
+        burningToken = _burningToken;
         registrationCost = _startingCost;
     }
 
@@ -52,6 +52,14 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
 
         // Make the external call and if successful, burn the tokens
         require(this.call(_data));
+    }
+
+    /**
+     * Set the token to be burnt.
+     * @param _burningToken The token to be burnt.
+     */
+    function setBurningToken(ERC20 _burningToken) external onlyOwner {
+        burningToken = _burningToken;
     }
 
     /**
