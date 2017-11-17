@@ -17,11 +17,14 @@ contract("DelegatingDeedHolder", (accounts) => {
     // ENS related constants
     const TLD = "eth"
     const DOMAIN = "name"
+    const SUBDOMAIN = "sub"
     const ROOT_NAMEHASH = namehash("")
     const TLD_NAMEHASH = namehash(TLD)
     const DOMAIN_NAMEHASH = namehash(`${DOMAIN}.${TLD}`)
+    const SUBDOMAIN_NAMEHASH = namehash(`${SUBDOMAIN}.${DOMAIN}.${TLD}`)
     const TLD_REGISTRAR_LABEL = web3.sha3(TLD)
     const DOMAIN_REGISTRAR_LABEL = web3.sha3(DOMAIN)
+    const SUBDOMAIN_REGISTRAR_LABEL = web3.sha3(SUBDOMAIN)
 
     let ens
     let registrar
@@ -71,5 +74,12 @@ contract("DelegatingDeedHolder", (accounts) => {
         await assertRevert(async () => {
             await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_LABEL, newDomainRegistrar.address)
         })
+    })
+
+    it("allows the manager to manage subnodes", async () => {
+        await delegatingDeedHolder.setManager(DOMAIN_REGISTRAR_LABEL, domainRegistrar.address)
+
+        await domainRegistrar.register(SUBDOMAIN_REGISTRAR_LABEL, NEW_HOLDER)
+        assert(NEW_HOLDER, await ens.owner(SUBDOMAIN_NAMEHASH))
     })
 })
