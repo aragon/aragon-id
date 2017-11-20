@@ -1,8 +1,9 @@
-# aragon-id
+# Aragon ID
 
 Collection of contracts for verifiably safe ENS registrations.
 
 #### 🚨 Everything in this repo is highly experimental software.
+
 It is not secure to use any of this code in production (mainnet) until proper security audits have
 been conducted. It can result in irreversible loss of funds.
 
@@ -12,8 +13,9 @@ As summarized by [Dan Finlay](https://medium.com/@danfinlay/the-future-of-ens-su
 and [Nick Johnson](https://medium.com/the-ethereum-name-service/results-of-the-first-ens-workshop-ab5e8d39fb79)
 as part of the first ENS workshop, ENS subdomain registrations are, by default, liable to be changed
 by the owner of the domain at any time. The domain owner has the power to change the details of any
-subdomains and can even transfer ownership of the domain back to themselves by calling the [auction
-registrar's `finalizeAuction()`](https://github.com/ethereum/ens/blob/master/contracts/HashRegistrarSimplified.sol#L458)
+subdomains and can even transfer ownership of the domain back to themselves by calling the auction
+registrar's [`finalizeAuction()`](https://github.com/ethereum/ens/blob/master/contracts/HashRegistrarSimplified.sol#L458)
+or [`transfer()`](https://github.com/ethereum/ens/blob/master/contracts/HashRegistrarSimplified.sol#L475)
 at any time. This problem persists all the down way to TLDs, as the ENS root is controlled by the
 ENS multisig.
 
@@ -29,14 +31,21 @@ Slightly modified version of [Nick Johnson's `DeedHolder`](https://gist.github.c
 The `DeedHolder` acts as a holding repository for deeds (created by the auction registrar for each
 registration). Once transferred, deeds, and their corresponding ENS domains, are locked to the
 `DeedHolder` until the original registrar is replaced. This prevents the domain owner from being
-able to both control the ENS domain directly, as well as disabling the ability to call the
-registrar's `finalizeAuction()` to re-gain full control of the domain.
+able to both control the ENS domain directly, as well as disabling their ability to call the
+registrar's `finalizeAuction()` or `transfer()` to re-gain full control of the domain.
+
+Given that the migration process to the new registrar is unknown at this time and may require
+multiple operations, ownership of the deed will need to be transferred to a contract whose logic is
+similarly unknown. This new owner in charge of the migration should be decided by a governance
+mechanism, such as a community multisig. Once the migration is complete, the deed should again be
+locked to ensure that the domain cannot be tampered with.
 
 Functions:
     - `claim(bytes32 node)`: Re-claim the deed from the `DeedHolder` when the original registrar has
       been replaced by a new registrar
     - `owner(bytes32 node) returns(address)`: Returns the current owner of the deed
-    - `transfer(bytes32 node, address newOwner)`: Transfer ownership of the deed
+    - `transfer(bytes32 node, address newOwner)`: Transfer ownership of the deed (once the deed
+      becomes claimable)
 
 #### DelegatingDeedHolder (is DeedHolder)
 
@@ -71,7 +80,8 @@ subdomains. Tokens used in this way will be burned by being sent to `0xdead`. Su
 
 Functions:
     - `register(bytes32 subnode, address owner)`: Register the subnode with the default resolver, if
-      the `owner` has pre-approved the contract for at least the registration cost
+      the `owner` has pre-approved the contract for at least the registration cost. This operation
+      will fail if burning the token through `token.transferFrom(owner, "0xdead") fails.
     - `registerWithResolver(bytes32 subnode, address owner, AbstractPublicResolver resolver)`:
       Register the subnode with the given resolver, which must conform to the [Resolver spec](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md#resolver-specification),
       if the `owner` has pre-approved the contract for at least the registration cost
@@ -120,11 +130,13 @@ token.approveAndCall(domainRegistrar.address, 10, '<call data for register(bytes
 deedHolder.claim(web3.sha3('domain'))
 ```
 
-## Installing
+## Developing
 
 ```sh
 npm install
 npm test
 ```
+
+## Installing (for Web3 projects)
 
 **Note**: Exported ABIs are coming, so hang tight :)
