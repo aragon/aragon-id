@@ -72,6 +72,15 @@ users in the future will be able to associate their Aragon ID identifier to any 
 be provided through a service, and vice-versa. Future users who come to Aragon with an existing
 identity may even opt to skip the Aragon ID registration process altogether.
 
+As an example, in the case of the ongoing [standardization of Ethereum identities](https://github.com/ethereum/EIPs/issues/725),
+a user of Aragon could be represented by an ERC725 identity contract that is registered to an Aragon
+ID identifier. This identity contract would have a resolvable name and address, be allowed to
+interact with an Aragon organization via its `ACTION` keys, and be able to prove various details
+about itself to an organization via its held [claims](https://github.com/ethereum/EIPs/issues/735).
+In the future, an Aragon organization, possibly through a future [Aragon app](http://wiki.aragon.one/dev/apps/),
+could also be a claims issuer for identities—the most basic of which could be claims about
+membership or administration (e.g. "Brett Sun is the general director of Aradentity Inc.").
+
 ## Contracts
 
 #### DeedHolder
