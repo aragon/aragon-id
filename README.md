@@ -158,11 +158,11 @@ const token = '...'
 // Deploy contracts
 const deedHolder = DelegatingDeedHolder.new(ens.address, namehash('eth'))
 const nodeRegistrar = FIFSBurnableRegistrar.new(
-    ens.address,
-    publicResolver.address,
-    namehash('node.eth'),
-    token.address,
-    10
+  ens.address,
+  publicResolver.address,
+  namehash('node.eth'),
+  token.address,
+  10
 )
 
 // Transfer deed ownership to the deed holder and set up the nodeRegistrar as the manager
