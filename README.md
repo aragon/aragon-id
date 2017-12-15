@@ -1,11 +1,27 @@
 # Aragon ID
 
-Collection of contracts for verifiably safe ENS registrations.
+Verifiably safe ENS registrations.
 
 #### 🚨 Everything in this repo is highly experimental software.
 
 It is not secure to use any of this code in production (mainnet) until proper security audits have
 been conducted. It can result in irreversible loss of funds.
+
+## Why
+
+Aragon users, as well as most blockchain users in general, are plagued by [Zooko's Triangle](https://en.wikipedia.org/wiki/Zooko%27s_triangle)—
+addresses are secure and decentralized, but not human-friendly. Aside from being the most important
+of the three for wide-adoption, it should also be noted that human-friendliness may be considered an
+aspect of security: cryptographic addresses have been shown to be easy for users to innocently
+mistake and [attackers to maliciously spoof](https://blog.gridplus.io/hardware-wallet-vulnerabilities-f20688361b88).
+
+Although several projects are building services to address this problem, such as [uPort](https://www.uport.me/)
+and [Civic](https://www.civic.com/), none are yet mature or readily available for mass-market
+adoption. In light of this, Aragon ID is a simple identity system to bridge the gap until such
+projects are ready. It leverages the existing [ENS](https://ens.domains/) infrastructure to securely
+provide two-way, first-in-first-served mappings of addresses to `<name>.aragonid.eth` identifiers.
+Afterwards, users will be able to resolve and reverse-resolve any `<name>.aragonid.eth` to an
+address and trust that their name registrations are safely in their own control.
 
 ## Usage
 
@@ -19,10 +35,44 @@ or [`transfer()`](https://github.com/ethereum/ens/blob/master/contracts/HashRegi
 at any time. This problem persists all the down way to TLDs, as the ENS root is controlled by the
 ENS multisig.
 
-`aragon-id` contains a collection of contracts meant to be used together to mitigate this issue for
-users assigned to a subnode. It is heavily influenced by [prior work from Nick Johnson](https://gist.github.com/Arachnid/3acaf6ed437ee79e8e894b2ce5e82441).
+At its heart, Aragon ID is a collection of contracts that mitigate this lack of security for
+registrants of a subnode. It is heavily influenced by [prior work from Nick Johnson](https://gist.github.com/Arachnid/3acaf6ed437ee79e8e894b2ce5e82441).
 
-### Contracts
+### In an Aragon Client
+
+New users of Aragon should be recommended to register a human-friendly name under
+`<name>.aragonid.eth` if they don't already have an ENS identifier associated with their address.
+While the registration process is initially free and first-in-first-served, in the event of bad
+actors or high demand, Aragon may require users to burn a number of [Aragon Network Tokens](https://github.com/aragon/aragon-network-token)
+or another token as a cost of registration.
+
+To fully register a name, two transactions from the user are required; unfortunately, there is no
+secure way to to create a two-way registration (both address-to-name and name-to-address resolvable)
+for a user in one transaction. As such, registration should first occur in the "forward" direction,
+through the deployed [FIFSBurnableRegistrar](#fifsburnableregistrar-is-fifsresolvingregistrar) for
+`aragonid.eth`, to secure a name. On its success, the "reverse" registration should be then be sent
+to the existing [ENS Reverse Registrar](http://docs.ens.domains/en/latest/userguide.html#reverse-name-resolution).
+
+Note that users have full control of their `<name>.aragonid.eth` subnode, and their registration may
+be altered in the event of a transfer. Before using an identifier, Aragon clients should first check
+that the address it resolves to has not changed.
+
+## Future work
+
+Although Aragon previously [integrated with Keybase](https://blog.aragon.one/how-aragon-approaches-identity-and-the-ethereum-keybase-resolver-d548133e4a26),
+the existence of ENS now allows us to build an identity system that avoids relying on a centralized
+3rd party. In doing so, we lost a number of features that were previously provided by Keybase, such
+as off-chain storage (e.g. profile photos or other service identitifers). In the future, we plan to
+integrate Aragon ID with decentralized off-chain storage services, such as [Swarm](https://github.com/ethersphere/swarm)
+or [IPFS](https://ipfs.io/), to provide such functionality.
+
+Finally, in the wake of upcoming identity services like uPort and Civic, it should be noted that
+Aragon ID works at the most basic level of Ethereum identities: account addresses. This means that
+users in the future will be able to associate their Aragon ID identifier to any identity that would
+be provided through a service, and vice-versa. Future users who come to Aragon with an existing
+identity may even opt to skip the Aragon ID registration process altogether.
+
+## Contracts
 
 #### DeedHolder
 
@@ -130,13 +180,13 @@ token.approveAndCall(nodeRegistrar.address, 10, '<call data for register(bytes32
 deedHolder.claim(web3.sha3('node'))
 ```
 
+## Installing (for Web3 projects)
+
+**Note**: Exported ABIs are coming, so hang tight :)
+
 ## Developing
 
 ```sh
 npm install
 npm test
 ```
-
-## Installing (for Web3 projects)
-
-**Note**: Exported ABIs are coming, so hang tight :)
