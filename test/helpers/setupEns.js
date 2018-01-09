@@ -33,7 +33,7 @@ module.exports = {
 
         // Setup new .eth domain
         await registrar.startAuction(domainRegistrarHash, { gas: 100000 })
-        const bid = await registrar.shaBid(
+        const bid = await registrar.shaBid.call(
             domainRegistrarHash,
             account,
             web3.toWei(1, "ether"),
@@ -55,10 +55,10 @@ module.exports = {
         await registrar.finalizeAuction(domainRegistrarHash, { from: account, gas: 500000 })
 
         // We should be the owners of 'name.eth' now...
-        const [, deedAddress] = await registrar.entries(domainRegistrarHash)
+        const [, deedAddress] = await registrar.entries.call(domainRegistrarHash)
         const deed = Deed.at(deedAddress)
-        assert.equal(account, await deed.owner())
-        assert.equal(account, await ens.owner(domainNamehash))
+        assert.equal(account, await deed.owner.call())
+        assert.equal(account, await ens.owner.call(domainNamehash))
 
         return { ens, registrar }
     }

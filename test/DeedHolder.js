@@ -50,47 +50,51 @@ contract("DeedHolder", (accounts) => {
     })
 
     it("can take ownership of a deed", async () => {
-        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_LABEL)
+        const [, deedAddress] = await registrar.entries.call(DOMAIN_REGISTRAR_LABEL)
         const deed = Deed.at(deedAddress)
 
-        assert.equal(deedHolder.address, await deed.owner())
+        assert.equal(deedHolder.address, await deed.owner.call())
 
         // The deed holder still declares the original owner as the owner of the deed
-        assert.equal(OWNER, await deedHolder.owner(DOMAIN_REGISTRAR_LABEL))
+        assert.equal(OWNER, await deedHolder.owner.call(DOMAIN_REGISTRAR_LABEL))
     })
 
     it("takes ownership of the ENS node associated with the held deed", async () => {
-        assert.equal(deedHolder.address, await ens.owner(DOMAIN_NAMEHASH))
+        assert.equal(deedHolder.address, await ens.owner.call(DOMAIN_NAMEHASH))
+    })
+
+    it("reports the correct owner after initial transfer of ownership", async () => {
+        assert.equal(OWNER, await deedHolder.owner.call(DOMAIN_REGISTRAR_LABEL))
     })
 
     it("allows an owner to transfer a held deed", async () => {
-        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_LABEL)
+        const [, deedAddress] = await registrar.entries.call(DOMAIN_REGISTRAR_LABEL)
         const deed = Deed.at(deedAddress)
 
         await deedHolder.transfer(DOMAIN_REGISTRAR_LABEL, NEW_HOLDER)
-        assert.equal(NEW_HOLDER, await deedHolder.owner(DOMAIN_REGISTRAR_LABEL))
+        assert.equal(NEW_HOLDER, await deedHolder.owner.call(DOMAIN_REGISTRAR_LABEL))
 
         // Make sure it doesn't transfer the actual deed
-        assert.equal(deedHolder.address, await deed.owner())
+        assert.equal(deedHolder.address, await deed.owner.call())
     })
 
     it("allows the owner to claim back a deed after the registrar upgrades", async () => {
-        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_LABEL)
+        const [, deedAddress] = await registrar.entries.call(DOMAIN_REGISTRAR_LABEL)
         const deed = Deed.at(deedAddress)
 
         // Setup new .eth TLD registrar; this should take ownership of '.eth'
         const newRegistrar = await HashRegistrarSimplified.new(ens.address, TLD_NAMEHASH, 0)
         await ens.setSubnodeOwner(ROOT_NAMEHASH, TLD_REGISTRAR_LABEL, newRegistrar.address)
-        assert.equal(newRegistrar.address, await ens.owner(TLD_NAMEHASH))
+        assert.equal(newRegistrar.address, await ens.owner.call(TLD_NAMEHASH))
 
         // Claim the deed back
         await deedHolder.claim(DOMAIN_REGISTRAR_LABEL)
-        assert.equal(OWNER, await deed.owner())
-        assert.equal(OWNER, await deedHolder.owner(DOMAIN_REGISTRAR_LABEL))
+        assert.equal(OWNER, await deed.owner.call())
+        assert.equal(OWNER, await deedHolder.owner.call(DOMAIN_REGISTRAR_LABEL))
     })
 
     it("should allow a claimed deed to be transferred to a new registrar", async () => {
-        const [, deedAddress] = await registrar.entries(DOMAIN_REGISTRAR_LABEL)
+        const [, deedAddress] = await registrar.entries.call(DOMAIN_REGISTRAR_LABEL)
         const deed = Deed.at(deedAddress)
 
         // Setup new .eth TLD registrar; this should take ownership of '.eth'

@@ -29,7 +29,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
     let token
 
     beforeEach(async () => {
-        // Setup token balancess
+        // Setup token.balances.calls
         token = await MockApproveAndCallERC20.new()
         await token.mintToken(OWNER, INITIAL_TOKENS)
         await token.mintToken(OTHER_OWNER, INITIAL_TOKENS)
@@ -53,7 +53,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         const newCost = 100
         await registrar.setRegistrationCost(newCost)
 
-        assert.equal(newCost, await registrar.registrationCost())
+        assert.equal(newCost, await registrar.registrationCost.call())
     })
 
     it("should not allow anybody but the owner to change the burning cost", async () => {
@@ -80,27 +80,27 @@ contract("FIFSBurnableRegistrar", (accounts) => {
     it("should allow direct registrations when there's no cost", async () => {
         await registrar.register(DOMAIN_REGISTRAR_LABEL, OWNER)
 
-        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
-        assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
-        assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await ens.owner.call(DOMAIN_NAMEHASH))
+        assert.equal(resolver.address, await ens.resolver.call(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await resolver.addr.call(DOMAIN_NAMEHASH))
 
         // Make sure no tokens were burned
-        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
+        assert.equal(INITIAL_TOKENS, (await token.balances.call(OWNER)).toNumber())
     })
 
     it("should allow direct registrations with resolvers when there's no cost", async () => {
         const newResolver = await PublicResolver.new(ens.address)
 
         await registrar.registerWithResolver(DOMAIN_REGISTRAR_LABEL, OWNER, newResolver.address)
-        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
-        assert.equal(newResolver.address, await ens.resolver(DOMAIN_NAMEHASH))
-        assert.equal(OWNER, await newResolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await ens.owner.call(DOMAIN_NAMEHASH))
+        assert.equal(newResolver.address, await ens.resolver.call(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await newResolver.addr.call(DOMAIN_NAMEHASH))
 
         // Make sure the default resolver isn't set
-        assert.equal(0, await resolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(0, await resolver.addr.call(DOMAIN_NAMEHASH))
 
         // Make sure no tokens were burned
-        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
+        assert.equal(INITIAL_TOKENS, (await token.balances.call(OWNER)).toNumber())
     })
 
     it("should allow approve and call registrations when there's no cost", async () => {
@@ -108,12 +108,12 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         await token.approveAndCall(registrar.address, 100, calldata)
-        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
-        assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
-        assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await ens.owner.call(DOMAIN_NAMEHASH))
+        assert.equal(resolver.address, await ens.resolver.call(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await resolver.addr.call(DOMAIN_NAMEHASH))
 
         // Make sure no tokens were burned
-        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
+        assert.equal(INITIAL_TOKENS, (await token.balances.call(OWNER)).toNumber())
     })
 
     it("should allow approve and call registrations with a resolver when there's no cost", async () => {
@@ -127,15 +127,15 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         )
 
         await token.approveAndCall(registrar.address, 100, calldata)
-        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
-        assert.equal(newResolver.address, await ens.resolver(DOMAIN_NAMEHASH))
-        assert.equal(OWNER, await newResolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await ens.owner.call(DOMAIN_NAMEHASH))
+        assert.equal(newResolver.address, await ens.resolver.call(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await newResolver.addr.call(DOMAIN_NAMEHASH))
 
         // Make sure the default resolver isn't set
-        assert.equal(0, await resolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(0, await resolver.addr.call(DOMAIN_NAMEHASH))
 
         // Make sure no tokens were burned
-        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
+        assert.equal(INITIAL_TOKENS, (await token.balances.call(OWNER)).toNumber())
     })
 
     it("should allow direct registrations when enough tokens are burned", async () => {
@@ -145,13 +145,13 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         await token.approve(registrar.address, newCost)
         await registrar.register(DOMAIN_REGISTRAR_LABEL, OWNER)
 
-        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
-        assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
-        assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await ens.owner.call(DOMAIN_NAMEHASH))
+        assert.equal(resolver.address, await ens.resolver.call(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await resolver.addr.call(DOMAIN_NAMEHASH))
 
         // Make sure tokens were burned
-        assert.equal(INITIAL_TOKENS - newCost, (await token.balances(OWNER)).toNumber())
-        assert.equal(newCost, (await token.balances(BURN_ADDRESS)).toNumber())
+        assert.equal(INITIAL_TOKENS - newCost, (await token.balances.call(OWNER)).toNumber())
+        assert.equal(newCost, (await token.balances.call(BURN_ADDRESS)).toNumber())
     })
 
     it("should allow approve and call registrations when enough tokens are burned", async () => {
@@ -162,13 +162,13 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         const calldata = registrar.contract.register.getData(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         await token.approveAndCall(registrar.address, newCost, calldata)
-        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
-        assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
-        assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await ens.owner.call(DOMAIN_NAMEHASH))
+        assert.equal(resolver.address, await ens.resolver.call(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await resolver.addr.call(DOMAIN_NAMEHASH))
 
         // Make sure tokens were burned
-        assert.equal(INITIAL_TOKENS - newCost, (await token.balances(OWNER)).toNumber())
-        assert.equal(newCost, (await token.balances(BURN_ADDRESS)).toNumber())
+        assert.equal(INITIAL_TOKENS - newCost, (await token.balances.call(OWNER)).toNumber())
+        assert.equal(newCost, (await token.balances.call(BURN_ADDRESS)).toNumber())
     })
 
     it("should still allow registrations after changing the token", async () => {
@@ -183,17 +183,17 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         await newToken.approve(registrar.address, newCost)
         await registrar.register(DOMAIN_REGISTRAR_LABEL, OWNER)
 
-        assert.equal(OWNER, await ens.owner(DOMAIN_NAMEHASH))
-        assert.equal(resolver.address, await ens.resolver(DOMAIN_NAMEHASH))
-        assert.equal(OWNER, await resolver.addr(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await ens.owner.call(DOMAIN_NAMEHASH))
+        assert.equal(resolver.address, await ens.resolver.call(DOMAIN_NAMEHASH))
+        assert.equal(OWNER, await resolver.addr.call(DOMAIN_NAMEHASH))
 
         // Make sure new tokens were burned
-        assert.equal(INITIAL_TOKENS - newCost, (await newToken.balances(OWNER)).toNumber())
-        assert.equal(newCost, (await newToken.balances(BURN_ADDRESS)).toNumber())
+        assert.equal(INITIAL_TOKENS - newCost, (await newToken.balances.call(OWNER)).toNumber())
+        assert.equal(newCost, (await newToken.balances.call(BURN_ADDRESS)).toNumber())
 
         // Make sure old tokens weren't burned
-        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
-        assert.equal(0, (await token.balances(BURN_ADDRESS)).toNumber())
+        assert.equal(INITIAL_TOKENS, (await token.balances.call(OWNER)).toNumber())
+        assert.equal(0, (await token.balances.call(BURN_ADDRESS)).toNumber())
     })
 
     it("should not allow direct registrations when not enough tokens are burned", async () => {
@@ -206,7 +206,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         })
 
         // Make sure no tokens were burned
-        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
+        assert.equal(INITIAL_TOKENS, (await token.balances.call(OWNER)).toNumber())
     })
 
     it("should not allow approve and call registrations when not enough tokens are burned", async () => {
@@ -221,7 +221,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         })
 
         // Make sure no tokens were burned
-        assert.equal(INITIAL_TOKENS, (await token.balances(OWNER)).toNumber())
+        assert.equal(INITIAL_TOKENS, (await token.balances.call(OWNER)).toNumber())
     })
 
     it("should only burn the required amount via direct registration and no more", async () => {
@@ -232,8 +232,8 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         await registrar.register(DOMAIN_REGISTRAR_LABEL, OWNER)
 
         // Make sure only required amount of tokens were burned
-        assert.equal(INITIAL_TOKENS - newCost, (await token.balances(OWNER)).toNumber())
-        assert.equal(newCost, (await token.balances(BURN_ADDRESS)).toNumber())
+        assert.equal(INITIAL_TOKENS - newCost, (await token.balances.call(OWNER)).toNumber())
+        assert.equal(newCost, (await token.balances.call(BURN_ADDRESS)).toNumber())
     })
 
     it("should only burn the required amount via approve and call registration and no more", async () => {
@@ -246,7 +246,7 @@ contract("FIFSBurnableRegistrar", (accounts) => {
         await token.approveAndCall(registrar.address, newCost * 10, calldata)
 
         // Make sure only required amount of tokens were burned
-        assert.equal(INITIAL_TOKENS - newCost, (await token.balances(OWNER)).toNumber())
-        assert.equal(newCost, (await token.balances(BURN_ADDRESS)).toNumber())
+        assert.equal(INITIAL_TOKENS - newCost, (await token.balances.call(OWNER)).toNumber())
+        assert.equal(newCost, (await token.balances.call(BURN_ADDRESS)).toNumber())
     })
 })
