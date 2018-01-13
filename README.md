@@ -100,11 +100,12 @@ governance mechanism, such as a community multisig. Once the migration is comple
 again be locked to ensure that the node cannot be tampered with.
 
 Functions:
-    - `claim(bytes32 node)`: Re-claim the deed from the `DeedHolder` when the original registrar has
-      been replaced by a new registrar
-    - `owner(bytes32 node) returns(address)`: Returns the current owner of the deed
-    - `transfer(bytes32 node, address newOwner)`: Transfer ownership of the deed (note that the
-      new "owner" still has no access to the deed until it becomes claimable)
+
+- `claim(bytes32 node)`: Re-claim the deed from the `DeedHolder` when the original registrar has
+  been replaced by a new registrar
+- `owner(bytes32 node) returns(address)`: Returns the current owner of the deed
+- `transfer(bytes32 node, address newOwner)`: Transfer ownership of the deed (note that the
+  new "owner" still has no access to the deed until it becomes claimable)
 
 #### DelegatingDeedHolder (is DeedHolder)
 
@@ -116,8 +117,9 @@ ENS node, as the process of transferring the deed also sets the `DeedHolder` as 
 node.
 
 Functions:
-    - `setManager(bytes32 node, address manager)`: Set the manager for the ENS node tied to the
-      deed. Preferrably a registrar contract (see below).
+
+- `setManager(bytes32 node, address manager)`: Set the manager for the ENS node tied to the
+  deed. Preferrably a registrar contract (see below).
 
 #### FIFSResolvingRegistrar
 
@@ -126,10 +128,11 @@ implementation that also sets the resolver (and the corresponding address mappin
 supports the address interface) when a subnode is claimed.
 
 Functions:
-    - `register(bytes32 subnode, address owner)`: Register the subnode with the default resolver, if
-      not already claimed
-    - `registerWithResolver(bytes32 subnode, address owner, AbstractPublicResolver resolver)`:
-      Register the subnode with the given resolver, which must conform to the [Resolver spec](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md#resolver-specification)
+
+- `register(bytes32 subnode, address owner)`: Register the subnode with the default resolver, if
+  not already claimed
+- `registerWithResolver(bytes32 subnode, address owner, AbstractPublicResolver resolver)`:
+  Register the subnode with the given resolver, which must conform to the [Resolver spec](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md#resolver-specification)
 
 #### FIFSBurnableRegistrar (is FIFSResolvingRegistrar)
 
@@ -138,18 +141,19 @@ subnodes. Tokens used in this way will be burned by being sent to `0xdead`. Supp
 `ApproveAndCallReceiver` interface.
 
 Functions:
-    - `register(bytes32 subnode, address owner)`: Register the subnode with the default resolver, if
-      the `owner` has pre-approved the contract for at least the registration cost. This operation
-      will fail if burning the token through `token.transferFrom(owner, "0xdead") fails.
-    - `registerWithResolver(bytes32 subnode, address owner, AbstractPublicResolver resolver)`:
-      Register the subnode with the given resolver, which must conform to the [Resolver spec](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md#resolver-specification),
-      if the `owner` has pre-approved the contract for at least the registration cost
-    - `setBurningToken(ERC20 burningToken)`: Set the token to be burned when there is a registration
-      cost
-    - `setRegistrationCost(uint256 cost)`: Set the cost of registering a subnode
-    - `receiveApproval(address from, uint256 amount, address token, bytes data)`:
-      `ApproveAndCallReceiver` implementation, for tokens that support the `ApproveAndCall`
-      interface
+
+- `register(bytes32 subnode, address owner)`: Register the subnode with the default resolver, if
+  the `owner` has pre-approved the contract for at least the registration cost. This operation
+  will fail if burning the token through `token.transferFrom(owner, "0xdead") fails.
+- `registerWithResolver(bytes32 subnode, address owner, AbstractPublicResolver resolver)`:
+  Register the subnode with the given resolver, which must conform to the [Resolver spec](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md#resolver-specification),
+  if the `owner` has pre-approved the contract for at least the registration cost
+- `setBurningToken(ERC20 burningToken)`: Set the token to be burned when there is a registration
+  cost
+- `setRegistrationCost(uint256 cost)`: Set the cost of registering a subnode
+- `receiveApproval(address from, uint256 amount, address token, bytes data)`:
+  `ApproveAndCallReceiver` implementation, for tokens that support the `ApproveAndCall`
+  interface
 
 ### Example
 
