@@ -12,7 +12,7 @@
   },
   "author": "Aragon Institution MTU <contact@aragon.one>",
   "contributors": [
-    "Brett Sun"
+    "Brett Sun <brett@aragon.one>"
   ],
   "license": "GPL-3.0",
   "devDependencies": {
