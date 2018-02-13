@@ -1,5 +1,16 @@
-require('babel-register');
-require('babel-polyfill');
+const HDWalletProvider = require('truffle-hdwallet-provider')
+
+let rinkebyProvider = {}
+
+const mnemonic = 'stumble story behind hurt patient ball whisper art swift tongue ice alien';
+
+if (process.env.LIVE_NETWORKS) {
+  try {
+    rinkebyProvider = new HDWalletProvider(...require(require('homedir')()+'/.secret-rinkeby'))
+  } catch (e) {
+    rinkebyProvider = new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io')
+  }
+}
 
 module.exports = {
   networks: {
@@ -7,6 +18,12 @@ module.exports = {
       host: "localhost",
       port: 8545,
       network_id: "*" // Match any network id
+    },
+    rinkeby: {
+      network_id: 4,
+      provider: rinkebyProvider,
+      gas: 6.9e6,
+      gasPrice: 15000000001
     },
     coverage: {
       host: "localhost",

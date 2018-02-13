@@ -12,7 +12,8 @@
   },
   "author": "Aragon Institution MTU <contact@aragon.one>",
   "contributors": [
-    "Brett Sun <brett@aragon.one>"
+    "Brett Sun <brett@aragon.one>",
+    "Jorge Izquierdo <jorge@aragon.one>"
   ],
   "license": "GPL-3.0",
   "devDependencies": {
@@ -29,8 +30,11 @@
     "eslint-plugin-standard": "^3.0.1",
     "eth-ens-namehash": "^2.0.0",
     "ethereumjs-testrpc": "^6.0.1",
+    "homedir": "^0.6.0",
+    "js-sha3": "^0.7.0",
     "solhint": "^1.1.8",
     "solidity-coverage": "^0.4.0",
-    "truffle": "^4.0.1"
+    "truffle": "^4.0.1",
+    "truffle-hdwallet-provider": "0.0.3"
   }
 }
