@@ -1,7 +1,8 @@
 pragma solidity 0.4.18;
 
 import "./ens/AbstractENS.sol";
-import "./ens/ResolverInterface.sol";
+import "./ens/IPublicResolver.sol";
+import "./IFIFSResolvingRegistrar.sol";
 
 
 /**
@@ -10,10 +11,10 @@ import "./ens/ResolverInterface.sol";
  * Adapted from ENS' FIFSRegistrar:
  *   https://github.com/ethereum/ens/blob/master/contracts/FIFSRegistrar.sol
  */
-contract FIFSResolvingRegistrar {
+contract FIFSResolvingRegistrar is IFIFSResolvingRegistrar {
     bytes32 public rootNode;
     AbstractENS internal ens;
-    AbstractPublicResolver internal defaultResolver;
+    IPublicResolver internal defaultResolver;
 
     bytes4 private constant ADDR_INTERFACE_ID = 0x3b3b57de;
 
@@ -25,7 +26,7 @@ contract FIFSResolvingRegistrar {
      * @param _defaultResolver The address of the default resolver to use for subdomains.
      * @param _node The node that this registrar administers.
      */
-    function FIFSResolvingRegistrar(AbstractENS _ensAddr, AbstractPublicResolver _defaultResolver, bytes32 _node)
+    function FIFSResolvingRegistrar(AbstractENS _ensAddr, IPublicResolver _defaultResolver, bytes32 _node)
         public
     {
         ens = _ensAddr;
@@ -50,7 +51,7 @@ contract FIFSResolvingRegistrar {
      *                  If the resolver supports the address interface, the subdomain's address will
      *                  be set to the new owner.
      */
-    function registerWithResolver(bytes32 _subnode, address _owner, AbstractPublicResolver _resolver) public {
+    function registerWithResolver(bytes32 _subnode, address _owner, IPublicResolver _resolver) public {
         bytes32 node = keccak256(rootNode, _subnode);
         address currentOwner = ens.owner(node);
         require(currentOwner == address(0));
