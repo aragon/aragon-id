@@ -28,7 +28,7 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
      */
     function FIFSBurnableRegistrar(
         AbstractENS _ensAddr,
-        AbstractPublicResolver _resolver,
+        IPublicResolver _resolver,
         bytes32 _node,
         ERC20 _burningToken,
         uint256 _startingCost
@@ -61,7 +61,7 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
      * @param _owner The address of the new owner.
      */
     function register(bytes32 _subnode, address _owner) external {
-        registerWithResolver(_subnode, _owner, defaultResolver);
+        FIFSBurnableRegistrar.registerWithResolver(_subnode, _owner, defaultResolver);
     }
 
     /**
@@ -88,8 +88,8 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
      * @param _owner The address of the new owner.
      * @param _resolver The address of the resolver.
      */
-    function registerWithResolver(bytes32 _subnode, address _owner, AbstractPublicResolver _resolver) public {
-        super.registerWithResolver(_subnode, _owner, _resolver);
+    function registerWithResolver(bytes32 _subnode, address _owner, IPublicResolver _resolver) public {
+        FIFSResolvingRegistrar.registerWithResolver(_subnode, _owner, _resolver);
 
         // Burn tokens
         if (registrationCost > 0) {
