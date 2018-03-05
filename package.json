@@ -8,7 +8,8 @@
     "develop": "truffle develop",
     "lint": "solhint 'contracts/**/*.sol'",
     "migrate": "truffle migrate",
-    "test": "./test.sh"
+    "test": "./test.sh",
+    "deploy:devnet": "truffle exec --network devnet scripts/deploy-beta-aragonid.js"
   },
   "author": "Aragon Institution MTU <contact@aragon.one>",
   "contributors": [
