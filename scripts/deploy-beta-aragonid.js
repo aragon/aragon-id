@@ -4,8 +4,8 @@ const keccak256 = require('js-sha3').keccak_256
 const FIFSResolvingRegistrar = artifacts.require('FIFSResolvingRegistrar')
 const ENS = artifacts.require('AbstractENS')
 
-const owner = '0x4cb3fd420555a09ba98845f0b816e45cfb230983'
-const ens = '0xaa0ccb537289d226941745c4dd7a819a750897d0'
+const owner = process.env.OWNER || '0x4cb3fd420555a09ba98845f0b816e45cfb230983'
+const ens = process.env.ENS || '0xaa0ccb537289d226941745c4dd7a819a750897d0'
 
 const tld = namehash('eth')
 const label = '0x'+keccak256('aragonid')
