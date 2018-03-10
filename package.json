@@ -1,6 +1,6 @@
 {
   "name": "@aragon/id",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "",
   "scripts": {
     "compile": "truffle compile",
@@ -35,7 +35,10 @@
     "js-sha3": "^0.7.0",
     "solhint": "^1.1.8",
     "solidity-coverage": "^0.4.0",
-    "truffle": "^4.0.1",
+    "truffle": "4.0.5",
     "truffle-hdwallet-provider": "0.0.3"
+  },
+  "dependencies": {
+    "@aragon/os": "^3.0.3"
   }
 }

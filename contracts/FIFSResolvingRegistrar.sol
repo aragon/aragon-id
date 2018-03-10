@@ -1,6 +1,6 @@
 pragma solidity 0.4.18;
 
-import "./ens/AbstractENS.sol";
+import "@aragon/os/contracts/lib/ens/AbstractENS.sol";
 import "./ens/IPublicResolver.sol";
 import "./IFIFSResolvingRegistrar.sol";
 
