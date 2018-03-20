@@ -20,8 +20,8 @@ module.exports = {
       network_id: "*" // Match any network id
     },
     devnet: {
-      host: "devnet",
-      port: 8545,
+      host: "localhost",
+      port: 8535,
       network_id: "*" // Match any network id
     },
     rinkeby: {
