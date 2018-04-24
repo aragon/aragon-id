@@ -16,6 +16,13 @@
     "Brett Sun <brett@aragon.one>",
     "Jorge Izquierdo <jorge@aragon.one>"
   ],
+  "files": [
+    "index.js",
+    "build/",
+    "contracts/",
+    "migrations/",
+    "scripts/"
+  ],
   "license": "GPL-3.0",
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
