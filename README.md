@@ -1,4 +1,6 @@
 # Aragon ID
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Faragon%2Faragon-id.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Faragon%2Faragon-id?ref=badge_shield)
+
 
 Verifiably safe ENS registrations.
 
@@ -203,3 +205,7 @@ deedHolder.claim(web3.sha3('node'))
 npm install
 npm test
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Faragon%2Faragon-id.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Faragon%2Faragon-id?ref=badge_large)
