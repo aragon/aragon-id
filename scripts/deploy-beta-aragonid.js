@@ -5,7 +5,7 @@ const FIFSResolvingRegistrar = artifacts.require('FIFSResolvingRegistrar')
 const ENS = artifacts.require('AbstractENS')
 
 const owner = process.env.OWNER || '0x4cb3fd420555a09ba98845f0b816e45cfb230983'
-const ens = process.env.ENS || '0xaa0ccb537289d226941745c4dd7a819a750897d0'
+const ens = process.env.ENS || '0xfbae32d1cde62858bc45f51efc8cc4fa1415447e'
 
 const tld = namehash('eth')
 const label = '0x'+keccak256('aragonid')
@@ -26,4 +26,4 @@ module.exports = async callback => {
   console.log('Deployed AragonID:', aragonID.address)
 }
 
-// Deployed AragonID: 0x9f4984865797213dd4431551114c47bd98be8aac
+// Deployed AragonID: 0x3a06a6544e48708142508d9042f94ddda769d04f
