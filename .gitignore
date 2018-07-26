@@ -7,3 +7,6 @@ coverage.json
 scTopics
 
 node_modules/
+
+package-lock.json
+yarn.lock
