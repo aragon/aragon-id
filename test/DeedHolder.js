@@ -100,7 +100,7 @@ contract("DeedHolder", (accounts) => {
         // Setup new .eth TLD registrar; this should take ownership of '.eth'
         const mockRegistrar = await MockAcceptingTransferRegistrar.new()
         await ens.setSubnodeOwner(ROOT_NAMEHASH, TLD_REGISTRAR_LABEL, mockRegistrar.address)
-        assert.equal(mockRegistrar.address, await ens.owner(TLD_NAMEHASH))
+        assert.equal(mockRegistrar.address, await ens.owner.call(TLD_NAMEHASH))
         assert.isFalse(await mockRegistrar.acceptedTransfer(DOMAIN_REGISTRAR_LABEL))
 
         // Claim the deed back
@@ -112,7 +112,7 @@ contract("DeedHolder", (accounts) => {
         assert.equal(mockRegistrar.address, await deed.registrar())
 
         // Make sure the deed's been removed from the old registrar
-        assert.equal(0, (await registrar.entries(DOMAIN_REGISTRAR_LABEL))[1])
+        assert.equal(0, (await registrar.entries.call(DOMAIN_REGISTRAR_LABEL))[1])
     })
 
     it("disallows the original owner from transferring the held deed via the registrar after taking ownership", async () => {
