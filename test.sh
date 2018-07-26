@@ -58,6 +58,12 @@ fi
 
 if [ "$SOLIDITY_COVERAGE" = true ]; then
   node_modules/.bin/solidity-coverage
+  result=$?
 else
   node_modules/.bin/truffle test --network testrpc "$@"
+  result=$?
 fi
+
+kill -9 $testrpc_pid
+
+exit $result
