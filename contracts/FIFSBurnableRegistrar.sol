@@ -44,13 +44,15 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
      * Burns `registrationCost` number of tokens from the sender.
      * @param _from The address of the claimer.
      * @param _amount The amount of tokens approved by the claimer.
-     * @param _ The address of the token (unused).
+     * @param _token The address of the token (unused).
      * @param _data An encoded call to `registerWithResolver()`.
      */
-    function receiveApproval(address _from, uint256 _amount, address _, bytes _data) external {
+    // solhint-disable-next-line no-unused-vars
+    function receiveApproval(address _from, uint256 _amount, address _token, bytes _data) external {
         require(msg.sender == address(burningToken));
 
         // Make the external call and if successful, burn the tokens
+        // solhint-disable-next-line avoid-low-level-calls
         require(this.call(_data));
     }
 
