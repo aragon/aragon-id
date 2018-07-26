@@ -7,6 +7,7 @@ notifications:
 node_js:
   - '9'
 env:
+  - TASK=lint
   - TASK=test
   - TASK=coverage
 before_script:

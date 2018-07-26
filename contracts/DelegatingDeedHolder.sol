@@ -18,6 +18,7 @@ contract DelegatingDeedHolder is DeedHolder {
     function DelegatingDeedHolder(address _ens, bytes32 _registrarNode)
         public
         DeedHolder(_ens, _registrarNode)
+    // solhint-disable-next-line no-empty-blocks
     { }
 
     /**
