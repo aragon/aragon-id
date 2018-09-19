@@ -1,4 +1,4 @@
-pragma solidity 0.4.18;
+pragma solidity 0.4.24;
 
 import "./interface/ApproveAndCallReceiver.sol";
 import "./zeppelin/ERC20.sol";
@@ -26,7 +26,7 @@ contract FIFSBurnableRegistrar is Ownable, ApproveAndCallReceiver, FIFSResolving
      * @param _burningToken The token to be burned for claiming addresses.
      * @param _startingCost The initial cost of claiming an address.
      */
-    function FIFSBurnableRegistrar(
+    constructor(
         AbstractENS _ensAddr,
         IPublicResolver _resolver,
         bytes32 _node,

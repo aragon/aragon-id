@@ -1,4 +1,4 @@
-pragma solidity 0.4.18;
+pragma solidity 0.4.24;
 
 
 import "./DeedHolder.sol";
@@ -15,7 +15,7 @@ import "./DeedHolder.sol";
  * DeedHolder also transfers control of the ENS node.
  */
 contract DelegatingDeedHolder is DeedHolder {
-    function DelegatingDeedHolder(address _ens, bytes32 _registrarNode)
+    constructor(address _ens, bytes32 _registrarNode)
         public
         DeedHolder(_ens, _registrarNode)
     // solhint-disable-next-line no-empty-blocks

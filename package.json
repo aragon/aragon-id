@@ -1,12 +1,12 @@
 {
   "name": "@aragon/id",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "",
   "scripts": {
     "compile": "truffle compile",
     "coverage": "cross-env SOLIDITY_COVERAGE=true ./test.sh",
     "develop": "truffle develop",
-    "lint": "solhint 'contracts/**/*.sol'",
+    "lint": "solium --dir contracts",
     "migrate": "truffle migrate",
     "test": "./test.sh",
     "deploy:devnet": "truffle compile --all; truffle exec --network devnet scripts/deploy-beta-aragonid.js"
@@ -41,13 +41,12 @@
     "ethereumjs-testrpc": "^6.0.1",
     "homedir": "^0.6.0",
     "js-sha3": "^0.7.0",
-    "solhint": "^1.1.10",
-    "solidity-coverage": "0.4.3",
-    "solidity-coverage": "^0.4.0",
-    "truffle": "4.0.5",
+    "solium": "^1.1.8",
+    "solidity-coverage": "^0.5.8",
+    "truffle": "4.1.14",
     "truffle-hdwallet-provider": "0.0.3"
   },
   "dependencies": {
-    "@aragon/os": "^3.1.4"
+    "@aragon/os": "4.0.0-beta.2"
   }
 }

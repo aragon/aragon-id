@@ -1,8 +1,8 @@
-pragma solidity 0.4.18;
+pragma solidity 0.4.24;
 
 
 contract IENS {
-    function owner(bytes32 _node) public constant returns (address);
+    function owner(bytes32 _node) public view returns (address);
     function setOwner(bytes32 _node, address _owner) public;
 }
 
@@ -16,7 +16,7 @@ contract IDeed {
 contract IHashRegistrarSimplified {
     enum Mode { Open, Auction, Owned, Forbidden, Reveal, NotYetAvailable }
 
-    function entries(bytes32 _hash) public constant returns (Mode, address, uint, uint, uint);
+    function entries(bytes32 _hash) public view returns (Mode, address, uint, uint, uint);
     function transfer(bytes32 _hash, address _newOwner) public;
 }
 
@@ -54,7 +54,7 @@ contract DeedHolder {
         _;
     }
 
-    function DeedHolder(address _ens, bytes32 _registrarNode) public {
+    constructor(address _ens, bytes32 _registrarNode) public {
         ens = IENS(_ens);
         registrarNode = _registrarNode;
         registrar = IHashRegistrarSimplified(ens.owner(registrarNode));
@@ -76,7 +76,7 @@ contract DeedHolder {
      * @param _node The node hash of the deed to check.
      * @return The address owning the deed.
      */
-    function owner(bytes32 _node) public constant returns(address) {
+    function owner(bytes32 _node) public view returns(address) {
         if (owners[_node] != 0) {
             return owners[_node];
         }
@@ -97,6 +97,6 @@ contract DeedHolder {
      */
     function transfer(bytes32 _node, address _newOwner) public onlyDeedOwner(_node) {
         owners[_node] = _newOwner;
-        TransferDeed(_node, _newOwner);
+        emit TransferDeed(_node, _newOwner);
     }
 }
