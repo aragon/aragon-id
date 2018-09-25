@@ -12,6 +12,6 @@ env:
   - TASK=coverage
 before_script:
   - npm prune
-script: "npm run $TASK"
+script: "travis_wait 60 npm run $TASK"
 after_success:
   - cat coverage/lcov.info | ./node_modules/.bin/coveralls
