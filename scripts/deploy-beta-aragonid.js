@@ -22,7 +22,7 @@ module.exports = async (
     if (verbose) { console.log(...args) }
   }
 
-  log(ensAddress, owner)
+  log(`Deploying AragonID with ENS: ${ensAddress} and owner: ${owner}`)
   const FIFSResolvingRegistrar = artifacts.require('FIFSResolvingRegistrar')
   const ENS = artifacts.require('AbstractENS')
 
