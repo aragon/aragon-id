@@ -1,6 +1,6 @@
 pragma solidity ^0.4.0;
 
-import "@aragon/os/contracts/lib/ens/AbstractENS.sol";
+import "../../ens/AbstractENS.sol";
 
 /**
  * A registrar that allocates subdomains to the first person to claim them.

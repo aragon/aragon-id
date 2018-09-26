@@ -1,6 +1,6 @@
-pragma solidity 0.4.18;
+pragma solidity 0.4.24;
 
-import "@aragon/os/contracts/lib/ens/AbstractENS.sol";
+import "./ens/AbstractENS.sol";
 import "./ens/IPublicResolver.sol";
 import "./IFIFSResolvingRegistrar.sol";
 
@@ -26,7 +26,7 @@ contract FIFSResolvingRegistrar is IFIFSResolvingRegistrar {
      * @param _defaultResolver The address of the default resolver to use for subdomains.
      * @param _node The node that this registrar administers.
      */
-    function FIFSResolvingRegistrar(AbstractENS _ensAddr, IPublicResolver _defaultResolver, bytes32 _node)
+    constructor(AbstractENS _ensAddr, IPublicResolver _defaultResolver, bytes32 _node)
         public
     {
         ens = _ensAddr;
@@ -65,6 +65,6 @@ contract FIFSResolvingRegistrar is IFIFSResolvingRegistrar {
         // Give ownership to the claimer
         ens.setOwner(node, _owner);
 
-        ClaimSubdomain(_subnode, _owner, address(_resolver));
+        emit ClaimSubdomain(_subnode, _owner, address(_resolver));
     }
 }
