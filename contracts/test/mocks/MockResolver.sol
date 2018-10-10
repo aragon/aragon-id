@@ -1,6 +1,6 @@
 pragma solidity 0.4.24;
 
-import "../../ens/AbstractENS.sol";
+import "@aragon/os/contracts/lib/ens/AbstractENS.sol";
 
 
 contract MockResolver {
