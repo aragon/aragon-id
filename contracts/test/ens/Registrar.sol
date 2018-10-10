@@ -14,7 +14,7 @@ The plan is to test the basic features and then move to a new contract in at mos
 */
 
 
-import "../../ens/AbstractENS.sol";
+import "@aragon/os/contracts/lib/ens/AbstractENS.sol";
 
 
 /**
