@@ -1,5 +1,6 @@
 artifacts/
 build/
+flattened_contracts/
 
 coverage/
 coverageEnv/

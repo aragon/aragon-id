@@ -1,5 +1,6 @@
 const namehash = require('eth-ens-namehash').hash
 const keccak256 = require('js-sha3').keccak_256
+const logDeploy = require('@aragon/os/scripts/helpers/deploy-logger')
 
 const globalArtifacts = this.artifacts // Not injected unless called directly via truffle
 const defaultOwner = process.env.OWNER || '0x4cb3fd420555a09ba98845f0b816e45cfb230983'
@@ -27,8 +28,8 @@ module.exports = async (
   const ENS = artifacts.require('AbstractENS')
 
   const publicResolver = await ENS.at(ensAddress).resolver(namehash('resolver.eth'))
-  log('deploying AragonID')
   const aragonID = await FIFSResolvingRegistrar.new(ensAddress, publicResolver, node)
+  logDeploy(aragonID, { verbose })
 
   log('assigning ENS name to AragonID')
   await ENS.at(ensAddress).setSubnodeOwner(tld, label, aragonID.address)
@@ -39,5 +40,3 @@ module.exports = async (
   log('===========')
   log('Deployed AragonID:', aragonID.address)
 }
-
-// Deployed AragonID: 0x3a06a6544e48708142508d9042f94ddda769d04f
