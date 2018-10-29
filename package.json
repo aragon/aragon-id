@@ -21,9 +21,7 @@
     "index.js",
     "build/",
     "contracts/",
-    "migrations/",
-    "scripts/",
-    "truffle.js"
+    "scripts/"
   ],
   "license": "GPL-3.0",
   "devDependencies": {
