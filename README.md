@@ -77,7 +77,7 @@ a user of Aragon could be represented by an ERC725 identity contract that is reg
 ID identifier. This identity contract would have a resolvable name and address, be allowed to
 interact with an Aragon organization via its `ACTION` keys, and be able to prove various details
 about itself to an organization via its held [claims](https://github.com/ethereum/EIPs/issues/735).
-In the future, an Aragon organization, possibly through a future [Aragon app](http://wiki.aragon.one/dev/apps/),
+In the future, an Aragon organization, possibly through a future [Aragon app](http://wiki.aragon.org/dev/apps/),
 could also be a claims issuer for identities—the most basic of which could be claims about
 membership or administration (e.g. "Brett Sun is the general director of Aradentity Inc.").
 

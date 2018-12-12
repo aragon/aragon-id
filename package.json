@@ -12,7 +12,7 @@
     "deploy:devnet": "truffle compile --all; truffle exec --network devnet scripts/deploy-beta-aragonid.js",
     "prepublishOnly": "truffle compile --all"
   },
-  "author": "Aragon Institution MTU <contact@aragon.one>",
+  "author": "Aragon Association <legal@aragon.org>",
   "contributors": [
     "Brett Sun <brett@aragon.one>",
     "Jorge Izquierdo <jorge@aragon.one>"
