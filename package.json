@@ -23,7 +23,7 @@
     "contracts/",
     "scripts/"
   ],
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
