@@ -14,5 +14,9 @@ module.exports = {
   staging: {
     ens: "0xfe03625ea880a8cba336f9b5ad6e15b0a3b5a939",
     aragonid: "0xa2e76aa249e3f52ea94c175662adadf27185484a"
+  },
+  ropsten: {
+    ens: "0x6afe2cacee211ea9179992f89dc61ff25c61e923",
+    aragonid: "0x3c7f5e7946c09c38f53d608adfd2ed5d6b137ade"
   }
 }
