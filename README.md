@@ -195,7 +195,7 @@ deedHolder.claim(web3.sha3('node'))
 
 ## Installing (for Web3 projects)
 
-**Note**: Exported ABIs are coming, so hang tight :)
+You can pull exported ABIs via the `/abi` folder, e.g. `const DeedHolderAbi = require('@aragon/id/abi/DeedHolder.json).abi`
 
 ## Developing
 

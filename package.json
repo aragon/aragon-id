@@ -10,7 +10,8 @@
     "migrate": "truffle migrate",
     "test": "./test.sh",
     "deploy:devnet": "truffle compile --all; truffle exec --network devnet scripts/deploy-beta-aragonid.js",
-    "prepublishOnly": "truffle compile --all"
+    "abi:extract": "truffle-extract --output abi/ --keys abi",
+    "prepublishOnly": "truffle compile --all && npm run abi:extract -- --no-compile"
   },
   "author": "Aragon Association <legal@aragon.org>",
   "contributors": [
@@ -19,6 +20,7 @@
   ],
   "files": [
     "index.js",
+    "abi/",
     "build/",
     "contracts/",
     "scripts/"
@@ -40,9 +42,10 @@
     "ethereumjs-testrpc": "^6.0.1",
     "homedir": "^0.6.0",
     "js-sha3": "^0.7.0",
-    "solium": "^1.1.8",
     "solidity-coverage": "^0.5.8",
+    "solium": "^1.1.8",
     "truffle": "4.1.14",
+    "truffle-extract": "^1.2.1",
     "truffle-hdwallet-provider": "0.0.3"
   },
   "dependencies": {
