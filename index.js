@@ -1,6 +1,6 @@
 module.exports = {
   mainnet: {
-    ens: "0x314159265dd8dbb310642f98f50c066173c1259b",
+    ens: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
     aragonid: "0x546aa2eae2514494eeadb7bbb35243348983c59d"
   },
   rinkeby: {
