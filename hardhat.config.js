@@ -1,6 +1,5 @@
 require("@nomiclabs/hardhat-ethers");
 require("./tasks/transfer-ens");
-require("./tasks/impersonate");
 
 const { homedir } = require("os");
 const { join } = require("path");
